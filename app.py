@@ -15,8 +15,9 @@ def home():
 
 @app.route('/simulate')
 def recommend():
-    url = 'https://raw.githubusercontent.com/bupendravipin/bundlesimulation/master/712034.xlsx'
-    df = pd.read_excel(url, index_col=0)
+    df=pd.DataFrame([1,2,3],columns=['A'])
+#     url = 'https://raw.githubusercontent.com/bupendravipin/bundlesimulation/master/712034.xlsx'
+#     df = pd.read_excel(url, index_col=0)
     return(jsonify(df.to_json(orient='records')))
 
 # return(jsonify(df_result.to_json(orient='records')))
