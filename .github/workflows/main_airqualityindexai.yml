@@ -59,4 +59,4 @@ jobs:
         with:
           app-name: 'airqualityindexai'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_bd3e2798bab34a2a9a30e0c0641a1cb3 }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_cf7449c70c044be298e24381efd58851 }}
