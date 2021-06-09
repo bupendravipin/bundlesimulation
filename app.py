@@ -9,16 +9,19 @@ import pandas as pd
 from logger import *
 import requests
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS']=False
 
 logger=logging_func()
 
-@app.route('/')
+@app.route('/',methods=['POST'])
 def home():
     logger.info('In home endpoint')
     return 'Hello World'
 
-@app.route('/simulate')
-def recommend(request):
+@app.route('/simulate',methods=['POST'])
+def recommend():
+    a=1
+    b=2
     params=request.get_json()
     productcode=params['Productcode']
     market=params['Market']
