@@ -13,7 +13,7 @@ app.config['JSON_SORT_KEYS']=False
 
 logger=logging_func()
 
-@app.route('/',methods=['POST'])
+@app.route('/')
 def home():
     logger.info('In home endpoint')
     return 'Hello World'
