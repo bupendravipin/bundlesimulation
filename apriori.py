@@ -22,11 +22,7 @@ import uuid
 
 # generating unique id for saving in db
 id = uuid.uuid4()
-# sql_driver='ODBC Driver 17 for SQL Server'
-# server_address='az20d1-m20-sql-svr.database.windows.net'
-# db_name='az20d1-m20-sql'
-# uid='IM_DEV_ M2O_NPI2C'
-# pwd='Q!2rtd3@4'
+sql_query="select Sales_Doc_Number, Options, Option_Name from M2O_NPI2C.NPI2Cash_Sales_Order where Product_Code="
 # input params
 # productcode
 # market
@@ -97,9 +93,9 @@ def get_recommendation(request):
             return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
         # create sql query for salesorder data
         if market:
-            salesorder_sql="select Sales_Doc_Number, Options, Option_Name from M2O_NPI2C.NPI2Cash_Sales_Order where Product_Code="+"'"+productcode+"'"+"and Market="+"'"+market+"'"
+            salesorder_sql=sql_query+"'"+productcode+"'"+"and Market="+"'"+market+"'"
         else:
-            salesorder_sql="select Sales_Doc_Number, Options, Option_Name from M2O_NPI2C.NPI2Cash_Sales_Order where Product_Code="+"'"+productcode+"'"
+            salesorder_sql=sql_query+"'"+productcode+"'"
         try:
             # query to sales order data
             df_sales=pd.read_sql(salesorder_sql,cnxn)
@@ -204,9 +200,10 @@ def get_recommendation(request):
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
 #         return jsonify({'Error': msg + "%s" %str(df_final)}),requests.codes.INTERNAL_SERVER_ERROR
 #         return jsonify({'Error': msg + "%s" %str(df_apriori_result)}),requests.codes.INTERNAL_SERVER_ERROR
+    logger.info('shape of Apriori result set {}'.format(df_final.columns))
     df_final.rename({'support':'Support'},axis=1,inplace=True)
     df_final=df_final[['Options','Option_Name','Total_WRP','Support','Length']]
-    df_final['ID']=ID
+    df_final['ID']=id
     df_final['Product Code']=int(productcode)
 #     df_final=df_final[['ID','Product Code','Options','Option Name','Total_WRP','Support','Length']]
     out={'status':'success in local','ID':id,'Product_Code':productcode}
