@@ -204,7 +204,7 @@ def get_recommendation(request):
     df_final.rename({'support':'Support'},axis=1,inplace=True)
     df_final=df_final[['Options','Option_Name','Total_WRP','Support','Length']]
     df_final['ID']=id
-    df_final['Product Code']=int(productcode)
+    df_final['Product_Code']=int(productcode)
 #     df_final=df_final[['ID','Product Code','Options','Option Name','Total_WRP','Support','Length']]
     out={'status':'success in local','ID':id,'Product_Code':productcode}
     if medium!='db':
@@ -214,7 +214,6 @@ def get_recommendation(request):
     else:    
     # save to results to DB
         try:
-            cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
             cursor=cnxn.cursor()
             start_time=time.time()
             logger.info('Apriori results saving to DB START TIME  {}'.format(start_time))
