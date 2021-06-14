@@ -20,7 +20,7 @@ jobs:
     - name: Set up Python version
       uses: actions/setup-python@v1
       with:
-        python-version: '3.8'
+        python-version: '3.9'
 
     - name: Create and start virtual environment
       run: |
@@ -59,4 +59,4 @@ jobs:
         with:
           app-name: 'az20d1-m2o-webapp'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_885db818c0ce42a7b64ff5db823eda02 }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_0ab76c2e4e3e44899c5e9e16823d076d }}
