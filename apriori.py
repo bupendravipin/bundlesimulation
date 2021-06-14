@@ -207,7 +207,6 @@ def get_recommendation(request):
     df_final['Product Code']=int(productcode)
 #     df_final=df_final[['ID','Product Code','Options','Option Name','Total_WRP','Support','Length']]
     out={'status':'success in local','ID':id,'Product_Code':productcode}
-    logger.info("Apriori results shape {}".format(df_final.shape))
     if medium!='db':
         logger.info('*************************** END IN LOCAL *********************************')
         return jsonify(out),requests.codes.ok
@@ -218,6 +217,7 @@ def get_recommendation(request):
             cursor=cnxn.cursor()
             start_time=time.time()
             logger.info('Apriori results saving to DB START TIME  {}'.format(start_time))
+            logger.info('shape of Apriori result set {}'.format(df_final.columns))
             for index,row in df_final.iterrows():
                 cursor.execute('INSERT INTO M2O_NPI2C.NPI2Cash_Results([ID],[Product_Code],[Options],[Option_Name],[Total_WRP],[Support],[Length]) values (?,?,?,?,?,?,?)', 
                                 row['ID'], 
