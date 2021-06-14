@@ -1,42 +1,36 @@
 '''
-Created on May 31, 2021
+Created on May 25, 2021
 
 @author: 869259
 '''
+'''
+intent of code is for recommending frequently sold options for a selected product
+input params:
+productcode, market, frequency
+if running in local - set medium param in pythonconfig.ini - medium=local
+if running in webapp - set medium param in pythonconfig.ini - medium=db
+set configurable params in pythonconfig.ini
+output:
+for success scenario - return status,id,productcode
+for failure scenario - retuen status,msg
 
-from flask import Flask, request, jsonify
-import pandas as pd
-from logger import *
-import requests
-app = Flask(__name__)
+'''
+
+from flask import Flask,request,jsonify
+from apriori import get_recommendation
+
+app=Flask(__name__)
 app.config['JSON_SORT_KEYS']=False
 
-logger=logging_func()
-
-@app.route('/')
+@app.route('/testme')
 def home():
-    logger.info('In home endpoint')
-    return 'Hello World'
+    return 'success'
 
 @app.route('/simulate',methods=['POST'])
 def recommend():
-    a=1
-    b=2
-    params=request.get_json()
-    productcode=params['Productcode']
-    market=params['Market']
-    freq=params['Frequency']
-    logger.info('In simulate endpoint')
-    logger.info('productcode is {}'.format(productcode))
-    logger.info('market is {}'.format(market))
-    logger.info('freq is {}'.format(freq))
-    df=pd.DataFrame([1,2,3],columns=['A'])
-#     url = 'https://raw.githubusercontent.com/bupendravipin/bundlesimulation/master/712034.xlsx'
-#     df = pd.read_excel(url, index_col=0)
-    return(jsonify(df.to_json(orient='records')))
-
-# return(jsonify(df_result.to_json(orient='records')))
-
-if __name__ == '__main__':
+    df_result=get_recommendation(request)
+    return df_result
+#     return(jsonify(df_result.to_json(orient='records')))
+#     return recommendation(request)
+if __name__=='__main__':
     app.run(debug=True)
-
