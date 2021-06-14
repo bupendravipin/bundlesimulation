@@ -214,6 +214,7 @@ def get_recommendation(request):
     else:    
     # save to results to DB
         try:
+            cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
             cursor=cnxn.cursor()
             start_time=time.time()
             logger.info('Apriori results saving to DB START TIME  {}'.format(start_time))
