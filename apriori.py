@@ -209,8 +209,10 @@ def get_recommendation(request):
     out={'status':'success in local','ID':id,'Product_Code':productcode}
     if medium!='db':
         logger.info('*************************** END IN LOCAL *********************************')
-        return jsonify(out),requests.codes.ok
-#         return df_final
+#         return jsonify(out),requests.codes.ok
+        df_final=df_final[['ID','Product_Code','Options','Option_Name','Total_WRP','Support','Length']].astype(str)
+        return jsonify(df_final.to_json(orient='records'))
+        
     else:    
     # save to results to DB
         try:
@@ -236,7 +238,9 @@ def get_recommendation(request):
             logger.info('Apriori results saved to DB END TIME  {}'.format(time_elapsed_db))
             out={'status':'success in db','ID':id,'Product Code':productcode}
             logger.info('*************************** END IN DB *********************************')
-            return jsonify(out),requests.codes.ok
+            df_final=df_final[['ID','Product_Code','Options','Option_Name','Total_WRP','Support','Length']].astype(str)
+            return jsonify(df_final.to_json(orient='records'))
+#             return jsonify(out),requests.codes.ok
     #         return {'status':200, 'msg':'saved to db'}
         except Exception as e:
             msg='Debug in save results db; '
