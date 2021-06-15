@@ -3,6 +3,7 @@ Created on Jun 4, 2021
 
 @author: 869259
 '''
+from flask.globals import request
 '''
 intent of code is to run Apriori algorithm basis user selection criteria
 log file to keep track of saving results in db, post processing wrp, opion names
@@ -27,7 +28,31 @@ sql_query="select Sales_Doc_Number, Options, Option_Name from M2O_NPI2C.NPI2Cash
 # productcode
 # market
 # freq
+# DB connectivity
+# create db connection
+def db_connection(sql_driver,server_address,db_name,uid,pwd):
+    conn=pyodbc.connect( 'DRIVER={'+sql_driver+'};'
+                       'SERVER='+server_address+';'
+                       'DATABASE='+db_name+';'
+                       'UID='+uid+';'
+                       'PWD='+pwd)
+    return conn
+# close db connection
+def closeconnection(conn):
+    conn.close()
+def closecursor(crsr):
+    crsr.close()
+
 logger=logging_func()
+
+def get_recommendation_test(request):
+    params=request.get_json()
+    productcode=params['Productcode']
+    productcode=str(productcode)
+    market=params['Market']
+    freq=params['Frequency']
+    return True
+      
 def get_recommendation(request):
     try:
         params=request.get_json()
@@ -68,26 +93,11 @@ def get_recommendation(request):
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
     
     if medium=='db':
-        # DB connectivity
-        # create db connection
-        def db_connection(sql_driver,server_address,db_name,uid,pwd):
-            conn=pyodbc.connect( 'DRIVER={'+sql_driver+'};'
-                               'SERVER='+server_address+';'
-                               'DATABASE='+db_name+';'
-                               'UID='+uid+';'
-                               'PWD='+pwd)
-            return conn
-        # close db connection
-        def closeconnection(conn):
-            conn.close()
-        def closecursor(crsr):
-            crsr.close()
-        
         # connect to db
         try:
             cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
         except Exception as e:
-            msg='Check medium in pythonconfig.ini; Debug in db_connection method; '
+            msg='Check medium, uid, pwd in pythonconfig.ini; Debug in db_connection method; '
             msg=msg + str(e.__class__) + " " + str(e)
             logger.error(msg)
             return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
@@ -200,7 +210,7 @@ def get_recommendation(request):
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
 #         return jsonify({'Error': msg + "%s" %str(df_final)}),requests.codes.INTERNAL_SERVER_ERROR
 #         return jsonify({'Error': msg + "%s" %str(df_apriori_result)}),requests.codes.INTERNAL_SERVER_ERROR
-    logger.info('shape of Apriori result set {}'.format(df_final.columns))
+    logger.info('shape of Apriori result set {}'.format(df_final.shape))
     df_final.rename({'support':'Support'},axis=1,inplace=True)
     df_final=df_final[['Options','Option_Name','Total_WRP','Support','Length']]
     df_final['ID']=id
@@ -219,7 +229,7 @@ def get_recommendation(request):
             cursor=cnxn.cursor()
             start_time=time.time()
             logger.info('Apriori results saving to DB START TIME  {}'.format(start_time))
-            logger.info('shape of Apriori result set {}'.format(df_final.columns))
+            logger.info('shape of Apriori result set {}'.format(df_final.shape))
             for index,row in df_final.iterrows():
                 cursor.execute('INSERT INTO M2O_NPI2C.NPI2Cash_Results([ID],[Product_Code],[Options],[Option_Name],[Total_WRP],[Support],[Length]) values (?,?,?,?,?,?,?)', 
                                 row['ID'], 
