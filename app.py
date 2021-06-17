@@ -42,6 +42,19 @@ def recommend_stub():
     df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
     return(jsonify(df_result.to_json(orient='records')))
     
+@app.route('/marketstub',methods=['POST'])
+def market_stub():
+#     status=get_recommendation_test(request)
+    test_dict={"market1":"APAC","market2":"Benelux","market3":"Central Europe", "market4":"DACH", "market5":"France", "market6":"Greater China"}
+    df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
+    return(jsonify(df_result.to_json(orient='records')))
+
+@app.route('/productstub',methods=['POST'])
+def product_stub():
+#     status=get_recommendation_test(request)
+    test_dict={"product1":"712033","product2":"712034","product3":"712214", "product4":"712035", "product5":"712202", "product6":"712203"}
+    df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
+    return(jsonify(df_result.to_json(orient='records')))
 
 if __name__=='__main__':
     app.run(debug=True)
