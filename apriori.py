@@ -24,6 +24,10 @@ import uuid
 # generating unique id for saving in db
 id = uuid.uuid4()
 sql_query="select Sales_Doc_Number, Options, Option_Name from M2O_NPI2C.NPI2Cash_Sales_Order where Product_Code="
+bu_sql_query="select distinct Business from M2O_NPI2C.NPI2Cash_Product_Data where Cluster="
+category_sql_query="select distinct Category from M2O_NPI2C.NPI2Cash_Product_Data where Business="
+product_sql_query="select ID from M2O_NPI2C.NPI2Cash_Product_Data where Category="
+market_sql_query="select distinct Market from M2O_NPI2C.NPI2Cash_Sales_Order where Product_Code="
 # input params
 # productcode
 # market
@@ -52,7 +56,110 @@ def get_recommendation_test(request):
     market=params['Market']
     freq=params['Frequency']
     return True
-      
+
+def get_bu_test(request):
+    params=request.get_json()
+    cluster=params['cluster']
+    return True
+
+def get_business(cluster):
+    test_dict={"business1":"CT AMI","business2":"IGT Systems","business3":"PDS", "business4":"MR DXR OEM", "business5":"US", "business6":"IGT Devices"}
+    df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
+    return df_result
+    '''
+    try:
+        cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
+        bu_sql_query=bu_sql_query+"'"+cluster+"'"
+        try:
+            # query to sales order data
+            df_bu=pd.read_sql(bu_sql_query,cnxn)
+            closeconnection(cnxn)
+            logger.info('In get_business method, shape fo df_bu is {}'.format(df_bu.shape))
+            return df_bu
+        except Exception as e:
+            msg=str(e.__class__) + " " + str(e)
+            logger.error(msg)
+            return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR            
+    except Exception as e:
+        msg='Check medium, uid, pwd in pythonconfig.ini; Debug in db_connection method; '
+        msg=msg + str(e.__class__) + " " + str(e)
+        logger.error(msg)
+        return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
+    '''
+
+def get_category(cluster,bu):
+    test_dict={"category1":"CT Equip","category2":"IGT Fixed Serv","category3":"DXR Equip", "category4":"AMI Serv", "category5":"CI", "category6":"HTS"}
+    df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
+    return df_result
+    '''
+    try:
+        cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
+        category_sql_query=category_sql_query+"'"+bu+"'"
+        try:
+            # query to sales order data
+            df_category=pd.read_sql(category_sql_query,cnxn)
+            closeconnection(cnxn)
+            logger.info('In get_business method, shape of df_category is {}'.format(df_category.shape))
+            return df_category
+        except Exception as e:
+            msg=str(e.__class__) + " " + str(e)
+            logger.error(msg)
+            return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR            
+    except Exception as e:
+        msg='Check medium, uid, pwd in pythonconfig.ini; Debug in db_connection method; '
+        msg=msg + str(e.__class__) + " " + str(e)
+        logger.error(msg)
+        return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
+    '''
+def get_product(cluster,bu,category):
+    test_dict={"product1":"712033","product2":"712034","product3":"712214", "product4":"712035", "product5":"712202", "product6":"712203"}
+    df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
+    return df_result
+    '''
+    try:
+        cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
+        product_sql_query=product_sql_query+"'"+category+"'"
+        try:
+            # query to sales order data
+            df_product=pd.read_sql(product_sql_query,cnxn)
+            closeconnection(cnxn)
+            logger.info('In get_business method, shape of df_category is {}'.format(df_product.shape))
+            return df_product
+        except Exception as e:
+            msg=str(e.__class__) + " " + str(e)
+            logger.error(msg)
+            return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR            
+    except Exception as e:
+        msg='Check medium, uid, pwd in pythonconfig.ini; Debug in db_connection method; '
+        msg=msg + str(e.__class__) + " " + str(e)
+        logger.error(msg)
+        return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
+    '''
+def get_market(cluster,bu,category,productcode):
+    test_dict={"market1":"APAC","market2":"Benelux","market3":"Central Europe", "market4":"DACH", "market5":"France", "market6":"Greater China"}
+    df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
+    return df_result
+
+    try:
+        cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
+        market_sql_query=market_sql_query+"'"+productcode+"'"
+        try:
+            # query to sales order data
+            df_market=pd.read_sql(market_sql_query,cnxn)
+            closeconnection(cnxn)
+            logger.info('In get_market method, shape of df_category is {}'.format(df_market.shape))
+            return df_market
+        except Exception as e:
+            msg=str(e.__class__) + " " + str(e)
+            logger.error(msg)
+            return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR            
+    except Exception as e:
+        msg='Check medium, uid, pwd in pythonconfig.ini; Debug in db_connection method; '
+        msg=msg + str(e.__class__) + " " + str(e)
+        logger.error(msg)
+        return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
+
+
 def get_recommendation(request):
     try:
         params=request.get_json()
