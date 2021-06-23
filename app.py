@@ -17,8 +17,7 @@ for failure scenario - return status,msg
 '''
 
 from flask import Flask,request,jsonify
-from apriori import get_recommendation,get_recommendation_test,get_bu_test
-from apriori import get_business,get_category,get_product,get_market
+from apriori import get_recommendation,get_business,get_category,get_product,get_market
 import pandas as pd
 
 app=Flask(__name__)
@@ -28,9 +27,13 @@ app.config['JSON_SORT_KEYS']=False
 def home():
     return 'success'
 
-@app.route('/simulate',methods=['POST'])
+@app.route('/simulate',methods=['GET'])
 def recommend():
-    df_result=get_recommendation(request)
+    productcode=request.args.get('productcode')
+    market=request.args.get('market')
+    frequency=request.args.get('frequency')
+    df_result=get_recommendation(productcode,market,frequency)
+#     df_result=get_recommendation(request)
     return df_result
 #     return(jsonify(df_result.to_json(orient='records')))
 #     return recommendation(request)

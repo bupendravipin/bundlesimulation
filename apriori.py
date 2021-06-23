@@ -57,10 +57,6 @@ def get_recommendation_test(request):
     freq=params['Frequency']
     return True
 
-def get_bu_test(request):
-    params=request.get_json()
-    cluster=params['cluster']
-    return True
 
 def get_business(cluster):
     test_dict={"business1":"CT AMI","business2":"IGT Systems","business3":"PDS", "business4":"MR DXR OEM", "business5":"US", "business6":"IGT Devices"}
@@ -160,15 +156,16 @@ def get_market(cluster,bu,category,productcode):
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
 
 
-def get_recommendation(request):
+def get_recommendation(productcode,market,frequency):
     try:
-        params=request.get_json()
-        productcode=params['Productcode']
-        productcode=str(productcode)
-        market=params['Market']
-        freq=params['Frequency']
+#         params=request.get_json()
+#         productcode=params['Productcode']
+#         productcode=str(productcode)
+#         market=params['Market']
+#         freq=params['Frequency']
 #       below snippet runs in local 
         if medium!='db':
+            frequency=float(frequency)
 #             dxr_file_path='C:/Users/869259/Desktop/poc/others_data/DXR_Data_2019_20.xlsx'
             dxr_file_path='C:/Users/869259/Desktop/poc/others_data/ISPRI_Data/ISPRI_Sales_Data.xlsx'
             wrp_file_path='C:/Users/869259/Desktop/poc/others_data/ISPRI_Data/WRP - Apr 2021.xlsx'
@@ -255,7 +252,7 @@ def get_recommendation(request):
         except Exception as e:
             return e,requests.codes.INTERNAL_SERVER_ERROR
      
-    df_apriori_result,status=run_apriori(df_sales,freq)
+    df_apriori_result,status=run_apriori(df_sales,frequency)
     if status!=requests.codes.ok:
         msg='Debug in run_apriori method; '
         msg=msg + str(df_apriori_result.__class__) + " " + str(df_apriori_result)
