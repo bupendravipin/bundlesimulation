@@ -59,4 +59,4 @@ jobs:
         with:
           app-name: 'az20d1-m2o-webapp'
           slot-name: 'production'
-          publish-profile: ${{ secrets.AzureAppService_PublishProfile_7045a91e29b149c9aca34389f039e924 }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_00dd364936374271af46d57df5281fbf }}
