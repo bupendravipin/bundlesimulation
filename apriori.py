@@ -65,10 +65,10 @@ def get_business(cluster):
 #     return df_result
     try:
         cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
-        bu_sql_query=bu_sql_query+"'"+cluster+"'"
+        bu_sql=bu_sql_query+"'"+cluster+"'"
         try:
             # query to sales order data
-            df_bu=pd.read_sql(bu_sql_query,cnxn)
+            df_bu=pd.read_sql(bu_sql,cnxn)
             closeconnection(cnxn)
             logger.info('In get_business method, shape fo df_bu is {}'.format(df_bu.shape))
             return df_bu
@@ -89,12 +89,12 @@ def get_category(cluster,bu):
     
     try:
         cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
-        category_sql_query=category_sql_query+"'"+bu+"'"
+        category_sql=category_sql_query+"'"+bu+"'"
         try:
             # query to sales order data
-            df_category=pd.read_sql(category_sql_query,cnxn)
+            df_category=pd.read_sql(category_sql,cnxn)
             closeconnection(cnxn)
-            logger.info('In get_business method, shape of df_category is {}'.format(df_category.shape))
+            logger.info('In get_category method, shape of df_category is {}'.format(df_category.shape))
             return df_category
         except Exception as e:
             msg=str(e.__class__) + " " + str(e)
@@ -113,12 +113,12 @@ def get_product(cluster,bu,category):
     
     try:
         cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
-        product_sql_query=product_sql_query+"'"+category+"'"
+        product_sql=product_sql_query+"'"+category+"'"
         try:
             # query to sales order data
-            df_product=pd.read_sql(product_sql_query,cnxn)
+            df_product=pd.read_sql(product_sql,cnxn)
             closeconnection(cnxn)
-            logger.info('In get_business method, shape of df_category is {}'.format(df_product.shape))
+            logger.info('In get_product method, shape of df_category is {}'.format(df_product.shape))
             return df_product
         except Exception as e:
             msg=str(e.__class__) + " " + str(e)
@@ -131,16 +131,16 @@ def get_product(cluster,bu,category):
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
     
 def get_market(cluster,bu,category,productcode):
-    test_dict={"market1":"APAC","market2":"Benelux","market3":"Central Europe", "market4":"DACH", "market5":"France", "market6":"Greater China"}
-    df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
-    return df_result
+#     test_dict={"market1":"APAC","market2":"Benelux","market3":"Central Europe", "market4":"DACH", "market5":"France", "market6":"Greater China"}
+#     df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
+#     return df_result
 
     try:
         cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
-        market_sql_query=market_sql_query+"'"+productcode+"'"
+        market_sql=market_sql_query+"'"+productcode+"'"
         try:
             # query to sales order data
-            df_market=pd.read_sql(market_sql_query,cnxn)
+            df_market=pd.read_sql(market_sql,cnxn)
             closeconnection(cnxn)
             logger.info('In get_market method, shape of df_category is {}'.format(df_market.shape))
             return df_market
