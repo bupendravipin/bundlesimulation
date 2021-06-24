@@ -21,6 +21,8 @@ config.read(conf_file)
 
 
 log_path = config.get("Path", "app_log_path")
+dxr_file_path = config.get("local_file_path","sales_order_data")
+wrp_file_path = config.get("local_file_path","wrp_data")
 max_log_bytes = int(config.get("app_log", "max_log_bytes"))
 log_backups = int(config.get("app_log", "backups"))
 log_format = config.get("app_log", "format")
@@ -53,3 +55,4 @@ def logging_func():
     logger.addHandler(HANDLER)
     logger.setLevel(LOG_LEVEL)
     return logger
+# logger=logging_func()

@@ -28,6 +28,7 @@ bu_sql_query="select distinct Business from M2O_NPI2C.NPI2Cash_Product_Data wher
 category_sql_query="select distinct Category from M2O_NPI2C.NPI2Cash_Product_Data where Business="
 product_sql_query="select ID from M2O_NPI2C.NPI2Cash_Product_Data where Category="
 market_sql_query="select distinct Market from M2O_NPI2C.NPI2Cash_Sales_Order where Product_Code="
+wrp_sql="select VARCOND,ZCTR from M2O_NPI2C.NPI2Cash_Item_Price"
 # input params
 # productcode
 # market
@@ -59,10 +60,9 @@ def get_recommendation_test(request):
 
 
 def get_business(cluster):
-    test_dict={"business1":"CT AMI","business2":"IGT Systems","business3":"PDS", "business4":"MR DXR OEM", "business5":"US", "business6":"IGT Devices"}
-    df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
-    return df_result
-    '''
+#     test_dict={"business1":"CT AMI","business2":"IGT Systems","business3":"PDS", "business4":"MR DXR OEM", "business5":"US", "business6":"IGT Devices"}
+#     df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
+#     return df_result
     try:
         cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
         bu_sql_query=bu_sql_query+"'"+cluster+"'"
@@ -81,13 +81,12 @@ def get_business(cluster):
         msg=msg + str(e.__class__) + " " + str(e)
         logger.error(msg)
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
-    '''
 
 def get_category(cluster,bu):
-    test_dict={"category1":"CT Equip","category2":"IGT Fixed Serv","category3":"DXR Equip", "category4":"AMI Serv", "category5":"CI", "category6":"HTS"}
-    df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
-    return df_result
-    '''
+#     test_dict={"category1":"CT Equip","category2":"IGT Fixed Serv","category3":"DXR Equip", "category4":"AMI Serv", "category5":"CI", "category6":"HTS"}
+#     df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
+#     return df_result
+    
     try:
         cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
         category_sql_query=category_sql_query+"'"+bu+"'"
@@ -106,12 +105,12 @@ def get_category(cluster,bu):
         msg=msg + str(e.__class__) + " " + str(e)
         logger.error(msg)
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
-    '''
+    
 def get_product(cluster,bu,category):
-    test_dict={"product1":"712033","product2":"712034","product3":"712214", "product4":"712035", "product5":"712202", "product6":"712203"}
-    df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
-    return df_result
-    '''
+#     test_dict={"product1":"712033","product2":"712034","product3":"712214", "product4":"712035", "product5":"712202", "product6":"712203"}
+#     df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
+#     return df_result
+    
     try:
         cnxn=db_connection(sql_driver,server_address,db_name,uid,pwd)
         product_sql_query=product_sql_query+"'"+category+"'"
@@ -130,7 +129,7 @@ def get_product(cluster,bu,category):
         msg=msg + str(e.__class__) + " " + str(e)
         logger.error(msg)
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
-    '''
+    
 def get_market(cluster,bu,category,productcode):
     test_dict={"market1":"APAC","market2":"Benelux","market3":"Central Europe", "market4":"DACH", "market5":"France", "market6":"Greater China"}
     df_result=pd.DataFrame([test_dict], columns=test_dict.keys())
@@ -158,18 +157,9 @@ def get_market(cluster,bu,category,productcode):
 
 def get_recommendation(productcode,market,frequency):
     try:
-#         params=request.get_json()
-#         productcode=params['Productcode']
-#         productcode=str(productcode)
-#         market=params['Market']
-#         freq=params['Frequency']
+        frequency=float(frequency)
 #       below snippet runs in local 
         if medium!='db':
-            frequency=float(frequency)
-#             dxr_file_path='C:/Users/869259/Desktop/poc/others_data/DXR_Data_2019_20.xlsx'
-            dxr_file_path='C:/Users/869259/Desktop/poc/others_data/ISPRI_Data/ISPRI_Sales_Data.xlsx'
-            wrp_file_path='C:/Users/869259/Desktop/poc/others_data/ISPRI_Data/WRP - Apr 2021.xlsx'
-#             wrp_file_path='C:/Users/869259/Desktop/poc/others_data/WRP - Apr 2021.xlsx'
             df_dxr_main=pd.read_excel(dxr_file_path,sheet_name=None)
             df_sales=df_dxr_main['Sheet1']
             logger.info('*************************** START IN LOCAL *********************************')
@@ -188,8 +178,6 @@ def get_recommendation(productcode,market,frequency):
         else:
             logger.info('*************************** START IN DB *********************************')
             pass 
-        # remove productcode from options
-        #to be removed
     except Exception as e:
         msg='Debug in Input params; '
         msg=msg + str(e.__class__) + " " + str(e)
@@ -217,11 +205,8 @@ def get_recommendation(productcode,market,frequency):
             # remove productcode from options
             df_sales=df_sales[df_sales['Options']!=productcode]
             df_sales[['Sales_Doc_Number','Options','Option_Name']]=df_sales[['Sales_Doc_Number','Options','Option_Name']].astype(str)
-            df_sales.shape
             # query to Item price table
-            wrp_sql="select VARCOND,ZCTR from M2O_NPI2C.NPI2Cash_Item_Price"
             df_wrp=pd.read_sql(wrp_sql,cnxn)
-            df_wrp.shape
         except Exception as e:
             msg=str(e.__class__) + " " + str(e)
             logger.error(msg)
@@ -326,7 +311,6 @@ def get_recommendation(productcode,market,frequency):
 #         return jsonify(out),requests.codes.ok
         df_final=df_final[['ID','Product_Code','Options','Option_Name','Total_WRP','Support','Length']].astype(str)
         return jsonify(df_final.to_json(orient='records'))
-        
     else:    
     # save to results to DB
         try:
