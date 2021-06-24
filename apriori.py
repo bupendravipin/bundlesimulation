@@ -29,12 +29,7 @@ category_sql_query="select distinct Category from M2O_NPI2C.NPI2Cash_Product_Dat
 product_sql_query="select ID from M2O_NPI2C.NPI2Cash_Product_Data where Category="
 market_sql_query="select distinct Market from M2O_NPI2C.NPI2Cash_Sales_Order where Product_Code="
 wrp_sql="select VARCOND,ZCTR from M2O_NPI2C.NPI2Cash_Item_Price"
-# input params
-# productcode
-# market
-# freq
-# DB connectivity
-# create db connection
+
 def db_connection(sql_driver,server_address,db_name,uid,pwd):
     conn=pyodbc.connect( 'DRIVER={'+sql_driver+'};'
                        'SERVER='+server_address+';'
@@ -70,14 +65,14 @@ def get_business(cluster):
             # query to sales order data
             df_bu=pd.read_sql(bu_sql,cnxn)
             closeconnection(cnxn)
-            logger.info('In get_business method, shape fo df_bu is {}'.format(df_bu.shape))
+            logger.info('In get_business method, shape of df_bu is {}'.format(df_bu.shape))
             return df_bu
         except Exception as e:
             msg=str(e.__class__) + " " + str(e)
             logger.error(msg)
             return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR            
     except Exception as e:
-        msg='Check medium, uid, pwd in pythonconfig.ini; Debug in db_connection method; '
+        msg='Check get_business method; '
         msg=msg + str(e.__class__) + " " + str(e)
         logger.error(msg)
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
@@ -101,7 +96,7 @@ def get_category(cluster,bu):
             logger.error(msg)
             return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR            
     except Exception as e:
-        msg='Check medium, uid, pwd in pythonconfig.ini; Debug in db_connection method; '
+        msg='Check get_category method; '
         msg=msg + str(e.__class__) + " " + str(e)
         logger.error(msg)
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
@@ -118,14 +113,14 @@ def get_product(cluster,bu,category):
             # query to sales order data
             df_product=pd.read_sql(product_sql,cnxn)
             closeconnection(cnxn)
-            logger.info('In get_product method, shape of df_category is {}'.format(df_product.shape))
+            logger.info('In get_product method, shape of df_product is {}'.format(df_product.shape))
             return df_product
         except Exception as e:
             msg=str(e.__class__) + " " + str(e)
             logger.error(msg)
             return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR            
     except Exception as e:
-        msg='Check medium, uid, pwd in pythonconfig.ini; Debug in db_connection method; '
+        msg='Check get_product method; '
         msg=msg + str(e.__class__) + " " + str(e)
         logger.error(msg)
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
@@ -142,14 +137,14 @@ def get_market(cluster,bu,category,productcode):
             # query to sales order data
             df_market=pd.read_sql(market_sql,cnxn)
             closeconnection(cnxn)
-            logger.info('In get_market method, shape of df_category is {}'.format(df_market.shape))
+            logger.info('In get_market method, shape of df_market is {}'.format(df_market.shape))
             return df_market
         except Exception as e:
             msg=str(e.__class__) + " " + str(e)
             logger.error(msg)
             return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR            
     except Exception as e:
-        msg='Check medium, uid, pwd in pythonconfig.ini; Debug in db_connection method; '
+        msg='Check get_market method; '
         msg=msg + str(e.__class__) + " " + str(e)
         logger.error(msg)
         return jsonify({'status':'fail','message': msg}), requests.codes.INTERNAL_SERVER_ERROR
