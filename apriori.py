@@ -155,8 +155,8 @@ def get_recommendation(productcode,market,frequency):
         frequency=float(frequency)
 #       below snippet runs in local 
         if medium!='db':
-            df_dxr_main=pd.read_excel(dxr_file_path,sheet_name=None)
-            df_sales=df_dxr_main['Sheet1']
+            df_sales_main=pd.read_excel(sales_order_file_path,sheet_name=None)
+            df_sales=df_sales_main['Sheet1']
             logger.info('*************************** START IN LOCAL *********************************')
             logger.info('shape of df_sales {}'.format(df_sales.shape))
             df_wrp=pd.read_excel(wrp_file_path)
